@@ -23,9 +23,9 @@ public class Percolation {
     private final int width;
 
     /**
-     * The sites of grid, true represents `opened`, false represents `blocked`
+     * The sites of grid, 1 represents `opened`, 0 represents `blocked`
      */
-    private final boolean[][] sites;
+    private final byte[] sites;
 
     /**
      * The number of open sites
@@ -50,17 +50,14 @@ public class Percolation {
             throw new IllegalArgumentException("`n` must be positive");
         }
 
-        uf1 = new WeightedQuickUnionUF(n * n + 2);
-        uf2 = new WeightedQuickUnionUF(n * n + 1);
         width = n;
-        sites = new boolean[n][n];
-        for (int i = 0; i < n; i++) {
-            for (int j = 0; j < n; j++) {
-                sites[i][j] = false;
-            }
-        }
         topIndex = 0;
         bottomIndex = n * n + 1;
+        uf1 = new WeightedQuickUnionUF(n * n + 2);
+        uf2 = new WeightedQuickUnionUF(n * n + 1);
+        sites = new byte[n * n + 2];
+        sites[topIndex] = 1;
+        sites[bottomIndex] = 1;
     }
 
     /**
@@ -69,7 +66,7 @@ public class Percolation {
     public void open(int row, int col) {
         if (!isOpen(row, col)) {
             int index = getIndex(row, col);
-            sites[row - 1][col - 1] = true;
+            sites[index] = 1;
             openedCount++;
 
             if (row == 1) {
@@ -94,10 +91,8 @@ public class Percolation {
      * @return is the site (row, col) open?
      */
     public boolean isOpen(int row, int col) {
-        if (row <= 0 || row > width || col <= 0 || col > width) {
-            throw new IllegalArgumentException("The given site (row, col) must in the n-by-n grid");
-        }
-        return sites[row - 1][col - 1];
+        int index = getIndex(row, col);
+        return sites[index] == 1;
     }
 
     /**
