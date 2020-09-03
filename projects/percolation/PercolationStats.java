@@ -13,7 +13,7 @@ public class PercolationStats {
     /**
      * perform independent trials on an n-by-n grid
      *
-     * @param n      the width of grid
+     * @param n      the width of the grid
      * @param trials the trial times
      */
     public PercolationStats(int n, int trials) {
@@ -35,14 +35,14 @@ public class PercolationStats {
     }
 
     /**
-     * @return sample mean of percolation threshold
+     * @return sample mean of percolation thresholds
      */
     public double mean() {
         return StdStats.mean(samples);
     }
 
     /**
-     * @return sample standard deviation of percolation threshold
+     * @return sample standard deviation of percolation thresholds
      */
     public double stddev() {
         return StdStats.stddev(samples);
