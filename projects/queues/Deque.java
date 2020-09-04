@@ -146,29 +146,7 @@ public class Deque<Item> implements Iterable<Item> {
      */
     @Override
     public Iterator<Item> iterator() {
-        return new Iterator<Item>() {
-            private Node<Item> cur = head;
-
-            @Override
-            public boolean hasNext() {
-                return cur != null;
-            }
-
-            @Override
-            public Item next() {
-                if (!hasNext()) {
-                    throw new NoSuchElementException();
-                }
-                Item item = cur.item;
-                cur = cur.next;
-                return item;
-            }
-
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException("The deque implementation doesn't support remove operation.");
-            }
-        };
+        return new DequeIterator();
     }
 
     @Override
@@ -181,6 +159,30 @@ public class Deque<Item> implements Iterable<Item> {
             cur = cur.next;
         }
         return sb.toString();
+    }
+
+    private class DequeIterator implements Iterator<Item> {
+        private Node<Item> cur = head;
+
+        @Override
+        public boolean hasNext() {
+            return cur != null;
+        }
+
+        @Override
+        public Item next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            Item item = cur.item;
+            cur = cur.next;
+            return item;
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("The deque implementation doesn't support remove operation.");
+        }
     }
 
 

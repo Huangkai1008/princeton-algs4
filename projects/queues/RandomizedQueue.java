@@ -68,8 +68,11 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
      * Remove and return a random item.
      */
     public Item dequeue() {
-        int index = StdRandom.uniformInt(0, size - 1);
-        @SuppressWarnings("unchecked")
+        if (isEmpty()) {
+            throw new NoSuchElementException("The queue is empty");
+        }
+
+        int index = StdRandom.uniformInt(0, size);
         Item item = (Item) items[index];
         items[index] = items[size - 1];
         items[size - 1] = null;
@@ -85,10 +88,12 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
      * @return a random item without removing it.
      */
     public Item sample() {
-        int index = StdRandom.uniformInt(0, size - 1);
-        @SuppressWarnings("unchecked")
-        Item item = (Item) items[index];
-        return item;
+        if (isEmpty()) {
+            throw new NoSuchElementException("The queue is empty");
+        }
+
+        int index = StdRandom.uniformInt(0, size);
+        return (Item) items[index];
     }
 
     /**
@@ -136,6 +141,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
         public RandomizedQueueIterator() {
             copyItems = new Object[size];
             System.arraycopy(items, 0, copyItems, 0, size);
+            StdRandom.shuffle(copyItems);
             remain = size;
         }
 
@@ -144,9 +150,7 @@ public class RandomizedQueue<Item> implements Iterable<Item> {
             if (remain == 0) {
                 throw new NoSuchElementException();
             }
-            @SuppressWarnings("unchecked")
-            Item item = (Item) copyItems[--remain];
-            return item;
+            return (Item) copyItems[--remain];
         }
 
         @Override
