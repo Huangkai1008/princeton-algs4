@@ -1,15 +1,14 @@
 package collinear;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.LinkedList;
 
 /**
  * @author huangkai
  */
 public class BruteCollinearPoints {
     private static final int MINIMUM_LENGTH = 4;
-    private final List<LineSegment> collinearLineSegments = new ArrayList<>();
+    private final LinkedList<LineSegment> collinearLineSegments = new LinkedList<>();
 
     /**
      * Constructor of BruteCollinearPoints.
@@ -26,16 +25,16 @@ public class BruteCollinearPoints {
         }
 
         int length = points.length;
-        if (length < MINIMUM_LENGTH) {
-            return;
-        }
-
         for (int i = 0; i < length; i++) {
             for (int j = i + 1; j < length; j++) {
-                if (points[i] == points[j]) {
+                if (points[i].compareTo(points[j]) == 0) {
                     throw new IllegalArgumentException("Points can't repeat.");
                 }
             }
+        }
+
+        if (length < MINIMUM_LENGTH) {
+            return;
         }
 
         Point[] sortedPoints = Arrays.copyOf(points, length);

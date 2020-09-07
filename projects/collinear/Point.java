@@ -2,8 +2,8 @@ package collinear;
 
 import edu.princeton.cs.algs4.StdDraw;
 
+import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
 
 /**
  * @author huangkai
@@ -63,12 +63,19 @@ public class Point implements Comparable<Point> {
      * @return the slope between this point and the specified point
      */
     public double slopeTo(Point that) {
+        if (that == null)
+            throw new NullPointerException();
+
         if (this.x == that.x && this.y == that.y) {
             return Double.NEGATIVE_INFINITY;
         }
 
-        if (this.y == that.y) {
+        if (this.x == that.x) {
             return Double.POSITIVE_INFINITY;
+        }
+
+        if (this.y == that.y) {
+            return 0;
         }
 
         return (that.y - this.y) * 1.0 / (that.x - this.x);
@@ -85,7 +92,10 @@ public class Point implements Comparable<Point> {
      * if this point is greater than the argument point
      */
     public int compareTo(Point that) {
-        if (this.x == that.x && this.y == that.x) {
+        if (that == null)
+            throw new NullPointerException();
+
+        if (this.x == that.x && this.y == that.y) {
             return 0;
         }
 
@@ -103,7 +113,7 @@ public class Point implements Comparable<Point> {
         return new SlopeComparator();
     }
 
-    public class SlopeComparator implements Comparator<Point> {
+    private class SlopeComparator implements Comparator<Point> {
         @Override
         public int compare(Point o1, Point o2) {
             Double slope1 = slopeTo(o1);
@@ -136,11 +146,11 @@ public class Point implements Comparable<Point> {
         System.out.println(p2.compareTo(p3));
         System.out.println(p1.compareTo(p3));
 
-        List<Point> pointList = List.of(p1, p2, p3);
-        pointList.stream()
+        Point[] pointArray = {p1, p2, p3};
+        Arrays.stream(pointArray)
                 .sorted(Point::compareTo)
                 .forEach(System.out::println);
-        pointList.stream()
+        Arrays.stream(pointArray)
                 .sorted(p1.slopeOrder())
                 .forEach(System.out::println);
 
