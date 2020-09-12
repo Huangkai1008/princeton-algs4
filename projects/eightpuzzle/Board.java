@@ -29,12 +29,12 @@ public class Board {
     /**
      * Sum of Manhattan distances between tiles and goal.
      */
-    public int manhattan;
+    private final int manhattan;
 
     /**
      * The index of blank square.
      */
-    public int blankIndex;
+    private int blankIndex;
 
     /**
      * Create a board from an n-by-n array of tiles,
@@ -57,6 +57,7 @@ public class Board {
 
                 if (this.tiles[i][j] == 0) {
                     this.blankIndex = index(i, j);
+                    continue;
                 }
 
                 if (outOfPlace(i, j, this.tiles[i][j])) {
@@ -164,14 +165,20 @@ public class Board {
     }
 
     public static void main(String[] args) {
-        int[][] tiles = {{1, 0, 3}, {4, 2, 5}, {7, 8, 6}};
-        Board board = new Board(tiles);
-        System.out.println(board);
-        System.out.println(board.twin());
-        for (Board b : board.neighbors()) {
+        int[][] tiles1 = {{1, 0, 3}, {4, 2, 5}, {7, 8, 6}};
+        Board board1 = new Board(tiles1);
+        System.out.println(board1);
+        System.out.println(board1.twin());
+        for (Board b : board1.neighbors()) {
             System.out.println(b);
             System.out.println(b.isGoal());
         }
+
+        int[][] tiles2 = {{0, 1, 3}, {4, 2, 5}, {7, 8, 6}};
+        Board board2 = new Board(tiles2);
+        System.out.println(board2);
+        System.out.println(board2.manhattan());
+        System.out.println(board2.hamming());
     }
 
     /**
@@ -204,7 +211,7 @@ public class Board {
      */
     private boolean outOfPlace(int row, int col, int value) {
         // Because the tile labeled from 1.
-        return index(row, col) + 1 == value;
+        return index(row, col) + 1 != value;
     }
 
     /**
@@ -214,8 +221,8 @@ public class Board {
      * @return the manhatten distance of the tile.
      */
     private int manhattenDistance(int row, int col, int value) {
-        int targetRow = value / this.dimension;
-        int targetCol = value % this.dimension - 1;
+        int targetRow = (value - 1) / this.dimension;
+        int targetCol = (value - 1) % this.dimension;
         int vertical = Math.abs(row - targetRow);
         int horizontal = Math.abs(col - targetCol);
         return vertical + horizontal;
