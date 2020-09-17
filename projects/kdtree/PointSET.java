@@ -10,13 +10,13 @@ import java.util.List;
 /**
  * @author huangkai
  */
-public class PointSet {
+public class PointSET {
     private final SET<Point2D> pointSet;
 
     /**
      * Construct an empty set of points.
      */
-    public PointSet() {
+    public PointSET() {
         pointSet = new SET<>();
     }
 

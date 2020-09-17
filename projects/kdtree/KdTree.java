@@ -41,10 +41,6 @@ public class KdTree {
          */
         private final RectHV rect;
 
-        private Node(Point2D p) {
-            this(p, new RectHV(X_MIN, Y_MIN, X_MAX, Y_MAX));
-        }
-
         private Node(Point2D p, RectHV rect) {
             this.p = p;
             this.rect = rect;
@@ -92,13 +88,13 @@ public class KdTree {
             throw new IllegalArgumentException();
         }
 
-        this.root = insert(root, p, new RectHV(X_MIN, Y_MIN, X_MAX, Y_MAX), true);
+        this.root = insert(root, p, X_MIN, Y_MIN, X_MAX, Y_MAX, true);
         this.size++;
     }
 
-    private Node insert(Node node, Point2D p, RectHV rect, boolean compareByX) {
+    private Node insert(Node node, Point2D p, double x0, double y0, double x1, double y1, boolean compareByX) {
         if (node == null) {
-            return new Node(p, rect);
+            return new Node(p, new RectHV(x0, y0, x1, y1));
         }
 
         int cmp = compareTo(p, node, compareByX);
@@ -107,22 +103,17 @@ public class KdTree {
             return node;
         }
 
-
         if (compareByX) {
             if (cmp < 0) {
-                RectHV rectHV = new RectHV(rect.xmin(), rect.ymin(), node.p.x(), rect.ymax());
-                node.left = insert(node.left, p, rectHV, false);
+                node.left = insert(node.left, p, x0, y0, node.p.x(), y1, false);
             } else {
-                RectHV rectHV = new RectHV(node.p.x(), rect.ymin(), rect.xmax(), rect.ymax());
-                node.right = insert(node.right, p, rectHV, false);
+                node.right = insert(node.right, p, node.p.x(), y0, x1, y1, false);
             }
         } else {
             if (cmp < 0) {
-                RectHV rectHV = new RectHV(rect.xmin(), rect.ymin(), rect.xmax(), node.p.y());
-                node.left = insert(node.left, p, rectHV, true);
+                node.left = insert(node.left, p, x0, y0, x1, node.p.y(), true);
             } else {
-                RectHV rectHV = new RectHV(rect.xmin(), node.p.y(), rect.xmax(), rect.ymax());
-                node.right = insert(node.right, p, rectHV, true);
+                node.right = insert(node.right, p, x0, node.p.y(), x1, y1, true);
             }
         }
         return node;
@@ -153,7 +144,7 @@ public class KdTree {
         int cmp = compareTo(p, node, compareByX);
         if (cmp == 0) {
             return true;
-        } else if (cmp > 0) {
+        } else if (cmp < 0) {
             return this.contains(node.left, p, !compareByX);
         } else {
             return this.contains(node.right, p, !compareByX);
@@ -206,11 +197,10 @@ public class KdTree {
             return;
         }
 
-        if (rect.contains(node.p)) {
-            points.add(node.p);
-        }
-
         if (rect.intersects(node.rect)) {
+            if (rect.contains(node.p)) {
+                points.add(node.p);
+            }
             range(node.left, rect, points);
             range(node.right, rect, points);
         }
@@ -225,6 +215,10 @@ public class KdTree {
     public Point2D nearest(Point2D p) {
         if (p == null) {
             throw new IllegalArgumentException();
+        }
+
+        if (isEmpty()) {
+            return null;
         }
 
         return nearest(root, p, root.p, true);
@@ -259,7 +253,7 @@ public class KdTree {
 
     private int compareTo(Point2D p, Node node, boolean compareByX) {
         if (node == null)
-            throw new NullPointerException();
+            throw new IllegalArgumentException();
 
         if (compareByX) {
             int compare = Double.compare(p.x(), node.p.x());
